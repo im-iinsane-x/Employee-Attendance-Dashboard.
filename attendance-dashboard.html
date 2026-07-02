@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexora Corp | Employee Attendance Dashboard</title>
+<style>
+  :root{
+    --bg:#F1F4F9;
+    --panel:#FFFFFF;
+    --ink:#152238;
+    --ink-soft:#516079;
+    --primary:#2454A8;      /* corporate blue */
+    --primary-dark:#173B7A;
+    --accent:#14B8A6;       /* teal accent */
+    --line:#E3E8F0;
+    --excellent:#1E9E6B;
+    --excellent-bg:#E4F7EE;
+    --good:#2454A8;
+    --good-bg:#E8F0FC;
+    --average:#C98A1A;
+    --average-bg:#FDF2DD;
+    --poor:#D0453A;
+    --poor-bg:#FCE7E5;
+    --radius:10px;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color:var(--ink);
+    line-height:1.5;
+  }
+
+  h1,h2,h3{margin:0;}
+
+  /* ---------- HEADER ---------- */
+  header.site-header{
+    background:linear-gradient(120deg, var(--primary-dark), var(--primary) 70%);
+    color:#fff;
+    padding:20px 5vw;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:14px;
+    box-shadow:0 2px 12px rgba(21,34,56,.18);
+  }
+  .brand{display:flex;align-items:center;gap:14px;}
+  .logo-mark{
+    width:46px;height:46px;border-radius:9px;
+    background:var(--accent);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:18px;color:var(--primary-dark);
+    flex-shrink:0;
+  }
+  .brand-text h1{font-size:1.4rem;letter-spacing:.3px;}
+  .brand-text p{margin:2px 0 0;font-size:.8rem;color:#CFE0FA;letter-spacing:.6px;text-transform:uppercase;}
+  .header-meta{
+    font-size:.85rem;
+    color:#D8E5FB;
+    text-align:right;
+  }
+  .header-meta strong{color:#fff;display:block;font-size:.95rem;}
+
+  /* ---------- MAIN ---------- */
+  main{
+    max-width:1150px;
+    margin:0 auto;
+    padding:34px 5vw 60px;
+  }
+
+  .section-title{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .section-title h2{
+    font-size:1.35rem;
+    color:var(--ink);
+  }
+  .section-title .bar{
+    width:5px;height:20px;
+    background:var(--accent);
+    border-radius:3px;
+  }
+
+  /* ---------- CARD / DASHBOARD PANEL ---------- */
+  .card{
+    background:var(--panel);
+    border-radius:var(--radius);
+    border:1px solid var(--line);
+    box-shadow:0 4px 18px rgba(21,34,56,.06);
+  }
+
+  .form-card{
+    padding:28px clamp(16px,4vw,38px);
+    margin-bottom:38px;
+  }
+
+  form{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:20px 26px;
+  }
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  label{
+    font-size:.82rem;
+    font-weight:700;
+    color:var(--ink-soft);
+    letter-spacing:.2px;
+  }
+  label .req{color:var(--poor);margin-left:2px;}
+
+  input[type=text],
+  input[type=number],
+  select{
+    padding:10px 12px;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    font-size:.93rem;
+    font-family:inherit;
+    background:#FBFCFE;
+    color:var(--ink);
+    transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  input:focus, select:focus{
+    outline:none;
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px rgba(36,84,168,.15);
+  }
+
+  .error-msg{
+    font-size:.76rem;
+    color:var(--poor);
+    min-height:15px;
+  }
+
+  .btn-row{
+    grid-column:1 / -1;
+    display:flex;
+    gap:14px;
+    align-items:center;
+    margin-top:4px;
+    flex-wrap:wrap;
+  }
+  button{
+    border:none;
+    border-radius:8px;
+    padding:12px 28px;
+    font-size:.92rem;
+    font-weight:700;
+    letter-spacing:.3px;
+    cursor:pointer;
+    transition:transform .15s ease, box-shadow .15s ease, background .2s ease;
+  }
+  .btn-submit{
+    background:var(--primary);
+    color:#fff;
+  }
+  .btn-submit:hover{
+    background:var(--primary-dark);
+    transform:translateY(-2px);
+    box-shadow:0 6px 14px rgba(23,59,122,.35);
+  }
+  .btn-clear{
+    background:transparent;
+    color:var(--ink-soft);
+    border:1.5px solid var(--line);
+  }
+  .btn-clear:hover{
+    border-color:var(--ink-soft);
+    background:#F1F4F9;
+    transform:translateY(-2px);
+  }
+
+  .form-status{
+    grid-column:1 / -1;
+    padding:10px 14px;
+    border-radius:8px;
+    font-size:.86rem;
+    font-weight:600;
+    display:none;
+  }
+  .form-status.show{display:block;}
+  .form-status.success{background:var(--excellent-bg);color:var(--excellent);border:1px solid #BEE8D3;}
+  .form-status.error{background:var(--poor-bg);color:var(--poor);border:1px solid #F3C4BF;}
+
+  /* ---------- STAT STRIP ---------- */
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+    margin-bottom:30px;
+  }
+  .stat-box{
+    padding:18px 20px;
+    border-radius:var(--radius);
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-left:4px solid var(--primary);
+  }
+  .stat-box .num{font-size:1.6rem;font-weight:800;color:var(--ink);}
+  .stat-box .label{font-size:.78rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
+  .stat-box.excellent{border-left-color:var(--excellent);}
+  .stat-box.good{border-left-color:var(--good);}
+  .stat-box.average{border-left-color:var(--average);}
+  .stat-box.poor{border-left-color:var(--poor);}
+
+  /* ---------- TABLE ---------- */
+  .table-card{
+    padding:26px clamp(12px,4vw,32px) 30px;
+  }
+  .table-wrap{overflow-x:auto;}
+  table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:680px;
+  }
+  thead th{
+    background:var(--primary-dark);
+    color:#fff;
+    text-align:left;
+    padding:12px 14px;
+    font-size:.78rem;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+  }
+  thead th:first-child{border-top-left-radius:8px;}
+  thead th:last-child{border-top-right-radius:8px;}
+  tbody td{
+    padding:12px 14px;
+    border-bottom:1px solid var(--line);
+    font-size:.9rem;
+  }
+  tbody tr:hover{background:#F5F8FD;}
+  tbody tr:last-child td{border-bottom:none;}
+  .empty-row td{
+    text-align:center;
+    color:#9AA6B8;
+    font-style:italic;
+    padding:26px;
+  }
+
+  .status-badge{
+    display:inline-block;
+    padding:4px 12px;
+    border-radius:20px;
+    font-size:.78rem;
+    font-weight:700;
+    letter-spacing:.3px;
+  }
+  .status-badge.excellent{background:var(--excellent-bg);color:var(--excellent);}
+  .status-badge.good{background:var(--good-bg);color:var(--good);}
+  .status-badge.average{background:var(--average-bg);color:var(--average);}
+  .status-badge.poor{background:var(--poor-bg);color:var(--poor);}
+
+  .pct-bar-wrap{
+    width:100px;
+    height:8px;
+    background:var(--line);
+    border-radius:6px;
+    overflow:hidden;
+    margin-top:5px;
+  }
+  .pct-bar-fill{height:100%;border-radius:6px;}
+  .pct-bar-fill.excellent{background:var(--excellent);}
+  .pct-bar-fill.good{background:var(--good);}
+  .pct-bar-fill.average{background:var(--average);}
+  .pct-bar-fill.poor{background:var(--poor);}
+
+  .icon-btn{
+    background:transparent;
+    border:none;
+    color:var(--poor);
+    font-size:.82rem;
+    font-weight:700;
+    cursor:pointer;
+    padding:4px 8px;
+    border-radius:6px;
+  }
+  .icon-btn:hover{background:var(--poor-bg);}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    background:var(--primary-dark);
+    color:#CFE0FA;
+    text-align:center;
+    padding:18px 5vw;
+    font-size:.82rem;
+  }
+  footer strong{color:#fff;}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:900px){
+    form{grid-template-columns:repeat(2,1fr);}
+    .stats{grid-template-columns:repeat(2,1fr);}
+  }
+  @media (max-width:560px){
+    form{grid-template-columns:1fr;}
+    header.site-header{padding:16px 5vw;}
+    .header-meta{text-align:left;}
+    .stats{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">
+    <div class="logo-mark">NX</div>
+    <div class="brand-text">
+      <h1>Nexora Corp</h1>
+      <p>HR Attendance Management</p>
+    </div>
+  </div>
+  <div class="header-meta">
+    <strong id="todayDate">--</strong>
+    Attendance Dashboard
+  </div>
+</header>
+
+<main>
+
+  <section id="attendance-form">
+    <div class="section-title"><span class="bar"></span><h2>Employee Attendance Entry</h2></div>
+
+    <div class="card form-card">
+      <form id="attForm" novalidate>
+
+        <div class="field">
+          <label for="empId">Employee ID<span class="req">*</span></label>
+          <input type="text" id="empId" placeholder="e.g. 101">
+          <div class="error-msg" id="err-empId"></div>
+        </div>
+
+        <div class="field">
+          <label for="empName">Employee Name<span class="req">*</span></label>
+          <input type="text" id="empName" placeholder="e.g. Rahul Sharma">
+          <div class="error-msg" id="err-empName"></div>
+        </div>
+
+        <div class="field">
+          <label for="department">Department<span class="req">*</span></label>
+          <select id="department">
+            <option value="">Select Department</option>
+            <option value="Engineering">Engineering</option>
+            <option value="Sales">Sales</option>
+            <option value="HR">HR</option>
+            <option value="Finance">Finance</option>
+            <option value="Operations">Operations</option>
+            <option value="Marketing">Marketing</option>
+          </select>
+          <div class="error-msg" id="err-department"></div>
+        </div>
+
+        <div class="field">
+          <label for="workingDays">Working Days<span class="req">*</span></label>
+          <input type="number" id="workingDays" min="1" placeholder="e.g. 26">
+          <div class="error-msg" id="err-workingDays"></div>
+        </div>
+
+        <div class="field">
+          <label for="presentDays">Present Days<span class="req">*</span></label>
+          <input type="number" id="presentDays" min="0" placeholder="e.g. 24">
+          <div class="error-msg" id="err-presentDays"></div>
+        </div>
+
+        <div class="field">
+          <label for="leaveDays">Leave Days<span class="req">*</span></label>
+          <input type="number" id="leaveDays" min="0" placeholder="e.g. 2">
+          <div class="error-msg" id="err-leaveDays"></div>
+        </div>
+
+        <div class="form-status" id="formStatus"></div>
+
+        <div class="btn-row">
+          <button type="submit" class="btn-submit">Submit Attendance</button>
+          <button type="reset" class="btn-clear" id="clearBtn">Clear</button>
+        </div>
+
+      </form>
+    </div>
+  </section>
+
+  <section id="stats-section">
+    <div class="section-title"><span class="bar"></span><h2>Overview</h2></div>
+    <div class="stats">
+      <div class="stat-box"><div class="num" id="statTotal">0</div><div class="label">Total Records</div></div>
+      <div class="stat-box excellent"><div class="num" id="statExcellent">0</div><div class="label">Excellent</div></div>
+      <div class="stat-box average"><div class="num" id="statAverage">0</div><div class="label">Average</div></div>
+      <div class="stat-box poor"><div class="num" id="statPoor">0</div><div class="label">Poor</div></div>
+    </div>
+  </section>
+
+  <section id="report-table">
+    <div class="section-title"><span class="bar"></span><h2>Attendance Report</h2></div>
+
+    <div class="card table-card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Department</th>
+              <th>Working Days</th>
+              <th>Present</th>
+              <th>Leave</th>
+              <th>Attendance %</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="reportBody">
+            <tr class="empty-row">
+              <td colspan="9">No attendance records yet. Use the form above to add one.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>&copy; 2026 <strong>Nexora Corp</strong>. HR Attendance Management System</p>
+</footer>
+
+<script>
+(function(){
+  const form = document.getElementById('attForm');
+  const reportBody = document.getElementById('reportBody');
+  const formStatus = document.getElementById('formStatus');
+
+  const fields = {
+    empId: document.getElementById('empId'),
+    empName: document.getElementById('empName'),
+    department: document.getElementById('department'),
+    workingDays: document.getElementById('workingDays'),
+    presentDays: document.getElementById('presentDays'),
+    leaveDays: document.getElementById('leaveDays')
+  };
+
+  let records = [];
+
+  // ---- date display ----
+  document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-IN', {
+    day:'2-digit', month:'short', year:'numeric'
+  });
+
+  function setError(id, message){
+    const el = document.getElementById('err-' + id);
+    if(el) el.textContent = message || '';
+  }
+
+  function clearAllErrors(){
+    document.querySelectorAll('.error-msg').forEach(el => el.textContent = '');
+  }
+
+  function getStatus(pct){
+    if(pct >= 90) return {label:'Excellent', cls:'excellent'};
+    if(pct >= 75) return {label:'Good', cls:'good'};
+    if(pct >= 50) return {label:'Average', cls:'average'};
+    return {label:'Poor', cls:'poor'};
+  }
+
+  function validateForm(){
+    clearAllErrors();
+    let isValid = true;
+
+    if(!fields.empId.value.trim()){
+      setError('empId', 'Employee ID is required.');
+      isValid = false;
+    }
+
+    if(!fields.empName.value.trim()){
+      setError('empName', 'Employee name is required.');
+      isValid = false;
+    }
+
+    if(!fields.department.value){
+      setError('department', 'Please select a department.');
+      isValid = false;
+    }
+
+    const working = parseInt(fields.workingDays.value, 10);
+    const present = parseInt(fields.presentDays.value, 10);
+    const leave = parseInt(fields.leaveDays.value, 10);
+
+    if(fields.workingDays.value.trim() === '' || isNaN(working) || working <= 0){
+      setError('workingDays', 'Enter valid working days (greater than 0).');
+      isValid = false;
+    }
+
+    if(fields.presentDays.value.trim() === '' || isNaN(present) || present < 0){
+      setError('presentDays', 'Enter valid present days.');
+      isValid = false;
+    }
+
+    if(fields.leaveDays.value.trim() === '' || isNaN(leave) || leave < 0){
+      setError('leaveDays', 'Enter valid leave days.');
+      isValid = false;
+    }
+
+    if(!isNaN(working) && !isNaN(present) && present > working){
+      setError('presentDays', 'Present days cannot exceed working days.');
+      isValid = false;
+    }
+
+    if(!isNaN(working) && !isNaN(leave) && leave > working){
+      setError('leaveDays', 'Leave days cannot exceed working days.');
+      isValid = false;
+    }
+
+    return isValid;
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function renderTable(){
+    reportBody.innerHTML = '';
+
+    if(records.length === 0){
+      reportBody.innerHTML = '<tr class="empty-row"><td colspan="9">No attendance records yet. Use the form above to add one.</td></tr>';
+      updateStats();
+      return;
+    }
+
+    records.forEach((r, index) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${escapeHtml(r.empId)}</td>
+        <td>${escapeHtml(r.empName)}</td>
+        <td>${escapeHtml(r.department)}</td>
+        <td>${r.workingDays}</td>
+        <td>${r.presentDays}</td>
+        <td>${r.leaveDays}</td>
+        <td>
+          ${r.pct}%
+          <div class="pct-bar-wrap"><div class="pct-bar-fill ${r.status.cls}" style="width:${r.pct}%;"></div></div>
+        </td>
+        <td><span class="status-badge ${r.status.cls}">${r.status.label}</span></td>
+        <td><button class="icon-btn" data-index="${index}">Remove</button></td>
+      `;
+      reportBody.appendChild(tr);
+    });
+
+    updateStats();
+  }
+
+  function updateStats(){
+    document.getElementById('statTotal').textContent = records.length;
+    document.getElementById('statExcellent').textContent = records.filter(r => r.status.cls === 'excellent').length;
+    document.getElementById('statAverage').textContent = records.filter(r => r.status.cls === 'average').length;
+    document.getElementById('statPoor').textContent = records.filter(r => r.status.cls === 'poor').length;
+  }
+
+  function showStatus(message, type){
+    formStatus.textContent = message;
+    formStatus.className = 'form-status show ' + type;
+    setTimeout(() => { formStatus.className = 'form-status'; }, 3500);
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    if(!validateForm()){
+      showStatus('Please fix the highlighted errors before submitting.', 'error');
+      return;
+    }
+
+    const working = parseInt(fields.workingDays.value, 10);
+    const present = parseInt(fields.presentDays.value, 10);
+    const leave = parseInt(fields.leaveDays.value, 10);
+    const pct = Math.round((present / working) * 100);
+    const status = getStatus(pct);
+
+    records.push({
+      empId: fields.empId.value.trim(),
+      empName: fields.empName.value.trim(),
+      department: fields.department.options[fields.department.selectedIndex].text,
+      workingDays: working,
+      presentDays: present,
+      leaveDays: leave,
+      pct: pct,
+      status: status
+    });
+
+    renderTable();
+    showStatus('Attendance record added successfully.', 'success');
+    form.reset();
+    clearAllErrors();
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', function(){
+    clearAllErrors();
+    formStatus.className = 'form-status';
+  });
+
+  reportBody.addEventListener('click', function(e){
+    if(e.target.matches('.icon-btn')){
+      const idx = parseInt(e.target.getAttribute('data-index'), 10);
+      records.splice(idx, 1);
+      renderTable();
+    }
+  });
+
+  renderTable();
+})();
+</script>
+
+</body>
+</html>
